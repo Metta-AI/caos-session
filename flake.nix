@@ -12,7 +12,7 @@
     # `.caos-expr` to match: `std/flake-input-loader` refuses to evaluate a tree
     # whose expression and lockfile disagree, naming both revisions, so this
     # cannot drift silently.
-    caos.url = "github:Metta-AI/caos/caos-client-repo";
+    caos.url = "github:Metta-AI/caos/main";
   };
 
   # Nothing is built from here. The flake exists so the pin has somewhere to
