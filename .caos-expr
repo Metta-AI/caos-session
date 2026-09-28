@@ -19,4 +19,4 @@
 #
 # Both revs must equal what flake.lock locks for `--input=caos`. The loader
 # checks exactly that and refuses the evaluation if they differ.
-run --base:@@=github:Metta-AI/caos?rev=2c7af0275731f528c2fd6636463c45a31e2dbe4a&dir=std/flake-input-loader --in:@=. --expr=$CAOS_EXPR --input=caos --input-tree:@@=github:Metta-AI/caos?rev=2c7af0275731f528c2fd6636463c45a31e2dbe4a&dir=std --output-path=caos-std
+run --base:@@=github:Metta-AI/caos?rev=4b727d67ea93a690cfd9398aea8abebf1b463691&dir=std/flake-input-loader --in:@=. --expr=$CAOS_EXPR --input=caos --input-tree:@@=github:Metta-AI/caos?rev=4b727d67ea93a690cfd9398aea8abebf1b463691&dir=std --output-path=caos-std
