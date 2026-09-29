@@ -21,7 +21,7 @@ entropy:env=CAOS_SOFTMAX_TOKEN_ENTROPY
 
 # WHO MAY READ IT: only that tool, at the path it has once imported:
 #   import_source(source="https://github.com/Metta-AI/caos-softmax.git",
-#                 into="imports/caos-softmax/base")
+#                 into="imports/caos-softmax")
 # A reader naming a path the tree does not carry is dropped with a warning, so
 # until the import exists the token reaches nothing.
-reader=imports/caos-softmax/base/tools/gota
+reader=imports/caos-softmax/tools/gota
