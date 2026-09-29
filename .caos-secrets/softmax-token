@@ -1,0 +1,22 @@
+# Softmax bearer token for tools/gota (Gods of the Arena upload + hosted games).
+#
+# COMMITTED, and safe to be: neither the token nor its cache-isolation entropy
+# is in this file. Both name environment variables, so each user supplies their
+# own. Unset, the secret is simply absent and tools/gota runs anonymous (public
+# reads only) and refuses upload/play with a clear message.
+#
+# To use it, set both in the cloud environment's variables:
+#   SOFTMAX_TOKEN               the output of `uv run softmax get-token` after
+#                               `uv run softmax login` on your machine. Player
+#                               sessions last up to 24h, so refresh it when
+#                               `tools/gota action=status` says unauthenticated.
+#   CAOS_SOFTMAX_TOKEN_ENTROPY  any random string of 16+ chars, yours alone
+#
+# The entropy is what keeps your cached results out of anyone else's reach: it
+# is a bearer capability for the cache, so it must not be shared or committed.
+name=softmax-token
+value:env=SOFTMAX_TOKEN
+entropy:env=CAOS_SOFTMAX_TOKEN_ENTROPY
+
+# WHO MAY READ IT: only this tool. A reader is a path in this tree, eval-path'd.
+reader=tools/gota
