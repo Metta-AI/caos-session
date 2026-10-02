@@ -31,8 +31,11 @@ cloud environment at it:
   - `CAOS_SERVER_URL` — required. The `caos://…` ticket `caosd ticket` prints
     on the machine running your server. It is a credential: whoever holds it
     can drive that server.
-  - `GITHUB_TOKEN` and `CAOS_GITHUB_TOKEN_ENTROPY` — only for private
-    repositories. See `.caos-secrets/github-token`.
+- **Secrets** (a GitHub token for private repositories or for publishing)
+  are not environment variables and are not in this repo. They live in your
+  secret store on the caos server, pushed with `caos-cli secrets-push`, and
+  the setup line's `--secret-readers=<key>` names it. See caos' README,
+  "Secrets".
 
 Then start a session and say what to work on: *"import owner/repo and fix the
 flaky test in its scheduler"*.
@@ -63,7 +66,6 @@ re-pin after. `gh run list --branch <branch>` says when.
 flake.nix / flake.lock   the pin: which caos, by commit
 .caos-expr               mounts caos' std/ at caos-std/ (evaluated only, never on disk)
 AGENTS.md                what the agent is told at the start of every session
-.caos-secrets/           secret DECLARATIONS — names and readers, no values
 .gitignore               /caos-std/, which must not exist as a real directory
 ```
 

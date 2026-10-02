@@ -80,7 +80,12 @@ would not.
 |---|---|
 | `flake.nix` + `flake.lock` | which caos — the client binary, the tools, the tree |
 | `.caos-expr` | mounts caos' `std/` at `caos-std/` in the evaluated tree |
-| `.caos-secrets/github-token` | who may use the GitHub token, and where its value comes from |
+
+Secrets, such as a GitHub token, are not configured here. They live in the
+user's secret store on the caos server, and the session presents the key named
+by the environment's `--secret-readers`. With caos pinned at `1eb6241c` or
+later, the first prompt's `secret readers:` line (and `caos_status`) shows
+which key that is, or that there is none.
 
 To move to a newer caos: `nix flake update caos`, then set the two `rev=`
 values in `.caos-expr` to the new commit. They must agree with `flake.lock` —
