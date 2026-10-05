@@ -76,8 +76,11 @@ tools are switched off, so there is no second set to choose between. Two kinds:
 
 **Std tools**, reached by path with `run_tool(path="caos-std/<name>",
 arguments={...})`. There is no `bash` tool by name; shell is one of these.
-`tool_help(path="caos-std/<name>")` prints a tool's parameters. The ones you
-will want:
+`tool_help(path="caos-std/<name>")` prints a tool's parameters. `caos-std/`
+exists only in the evaluated tree, so `read` and `ls` cannot see it directly:
+`eval_path(path="caos-std")` returns a tree hash, and
+`read(root=<hash>, file-path="README.md")` is the index of every std tool. The
+ones you will want:
 
 - `caos-std/bash-tool` — `sh -c` from the conversation root (`cmd`, optional
   `cwd`, and `paths`: the conversation-relative content the command reads or
