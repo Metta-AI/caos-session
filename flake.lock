@@ -22,6 +22,20 @@
         "type": "github"
       }
     },
+    "caosstd": {
+      "locked": {
+        "owner": "Metta-AI",
+        "repo": "caos",
+        "rev": "6596c7354709ce178f86cbea80a81cdcad9a490c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Metta-AI",
+        "ref": "claude/bash-docs",
+        "repo": "caos",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1788465171,
@@ -76,8 +90,8 @@
         "lastModified": 1790046670,
         "narHash": "sha256-MYiI+CzL0tuWgRPjGsKCDHqYs2T3OzMlMQWOYWG0qso=",
         "owner": "NixOS",
-        "repo": "nixpkgs",
         "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
+        "repo": "nixpkgs",
         "type": "github"
       },
       "original": {
@@ -90,6 +104,7 @@
     "root": {
       "inputs": {
         "caos": "caos",
+        "caosstd": "caosstd",
         "nixpkgs": "nixpkgs_2"
       }
     },

@@ -13,6 +13,10 @@
     # whose expression and lockfile disagree, naming both revisions, so this
     # cannot drift silently.
     caos.url = "github:Metta-AI/caos/main";
+
+    # EXPERIMENT (this branch only): which std/ is mounted at caos-std/. The
+    # client above is still the `caos` input; this one is read by `.caos-expr`.
+    caosstd.url = "github:Metta-AI/caos?ref=claude/bash-docs";
   };
 
   # Nothing is built from here. The flake exists so the pin has somewhere to
