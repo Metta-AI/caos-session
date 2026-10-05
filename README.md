@@ -16,25 +16,33 @@ Fork this directory into a repository of its own, then point a Claude Code
 cloud environment at it:
 
 - **Repository**: your fork.
-- **Setup script**: two lines, which never change again —
+- **Setup script**: these lines, with your server's ticket and your secret
+  store's key filled in —
 
   ```
+  echo last modified 2026-10-05
   B=https://raw.githubusercontent.com/Metta-AI/caos/main
-  curl -fsSL "$B/integrations/claude-code/cloud/setup.sh" | bash -s -- --base="$B"
+  curl -fsSL "$B/integrations/claude-code/cloud/bootstrap.go" -o /tmp/caos-bootstrap.go
+  go run /tmp/caos-bootstrap.go --base="$B" --server=caos://<ticket> --secret-readers=<key>
   ```
 
-  This `--base` only says where the *bootstrap scripts* come from. The caos
-  that actually gets installed is the one **your fork pins**, which the setup
+  `--base` only says where the *bootstrap scripts* come from. The caos that
+  actually gets installed is the one **your fork pins**, which the setup
   script reads out of `flake.lock` before installing anything.
 
-- **Environment variables**:
-  - `CAOS_SERVER_URL` — required. The `caos://…` ticket `caosd ticket` prints
-    on the machine running your server. It is a credential: whoever holds it
-    can drive that server.
+  `--server` is the `caos://…` ticket `caosd ticket` prints on the machine
+  running your server. It is a credential: whoever holds it can drive that
+  server. It goes here and nowhere else — `CAOS_SERVER_URL` is not read, and
+  the environment needs no variables.
+
+  The `echo` line does nothing but change the script's text, which is what
+  makes an environment re-run setup (see *Moving the pin*).
+
 - **Secrets** (a GitHub token for private repositories or for publishing)
   are not environment variables and are not in this repo. They live in your
   secret store on the caos server, pushed with `caos-cli secrets-push`, and
-  the setup line's `--secret-readers=<key>` names it. See caos' README,
+  the setup line's `--secret-readers=<key>` names it — the key
+  `caos-cli secrets-init` printed. It is a credential too. See caos' README,
   "Secrets".
 
 Then start a session and say what to work on: *"import owner/repo and fix the
@@ -48,10 +56,16 @@ nix flake update caos
 
 then set the two `rev=` values in `.caos-expr` to the commit `flake.lock` now
 records. They must match: `std/flake-input-loader` compares them and refuses
-the evaluation if they differ, naming both revisions. The next session picks
-up the new client, the new tools and the new tree together — the session hook
-re-reads this pin every time, so a pushed change reaches an existing
-environment without rebuilding it.
+the evaluation if they differ, naming both revisions.
+
+**Then change the environment's setup script** — bumping the date on its
+`echo` line is enough. An environment caches its setup and re-runs it only
+when the script's text changes, while it fetches this repo before every
+session; so a pushed re-pin moves the checkout and leaves the installed client
+behind. The session hook notices — it prints `STALE INSTALL`, naming both
+revisions, and blocks every call — rather than running a client from one caos
+against tools from another. It cannot install the new pin itself: Claude Code
+has already started on the old files by the time it runs.
 
 **Pin a commit that already has a published build.** The client is downloaded
 from that commit's release, while the tools resolve through the same rev, so

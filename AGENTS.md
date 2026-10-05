@@ -69,6 +69,11 @@ worth knowing up front:
 - `caos-build` / `caos-test` — run the imported repo's own build and tests,
   when it defines them under `caos-tools/`.
 - `merge` — merge a commit into a source tree.
+- `publish_source` — push a source tree's commit to a branch on GitHub.
+- `run_tool(path="caos-std/github")` — one GitHub API call (`method`, `path`,
+  optional JSON `body`): open a PR, change its base, read its state. A run
+  fails only when no response came back, and a write may still have arrived,
+  so read the state with a GET before resending.
 
 `bash` needs conversation-relative paths declared for the content it touches,
 and `mv`/`cp -a` preserve a source tree's commit identity where a plain copy
@@ -93,7 +98,9 @@ values in `.caos-expr` to the new commit. They must agree with `flake.lock` —
 revisions, so this cannot go wrong quietly. Pin only a commit that already has
 a published build: the client comes from that commit's release and the tools
 resolve through the same rev, so a commit without one is refused rather than
-paired with an older client.
+paired with an older client. The environment then needs its setup script changed
+before a session installs the new pin; until it is, every call is blocked with
+`STALE INSTALL`.
 
 Fork this repository to add your own tools, instructions or pins. Nothing here
 is specific to one project.
