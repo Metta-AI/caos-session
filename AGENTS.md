@@ -34,7 +34,9 @@ Then copy the snapshot to the boundary you will edit, and leave the import
 untouched as the record of where you started:
 
 ```
-mkdir -p feature && cp -a imports/<repo>/base feature/01-change
+run_tool(path="caos-std/bash-tool",
+         arguments={"cmd": "mkdir -p feature && cp -a imports/<repo>/base feature/01-change",
+                    "paths": ["imports/<repo>/base"]})
 ```
 
 The `mkdir -p` is not optional — `cp` will not create the parent, and without
@@ -60,25 +62,40 @@ session, not the code.
 ## Tools
 
 The caos tools are the ones prefixed `caos`; the harness's own file and shell
-tools are switched off, so there is no second set to choose between. The ones
-worth knowing up front:
+tools are switched off, so there is no second set to choose between. Two kinds:
+
+**Registered tools**, called by name:
 
 - `read` / `ls` / `grep` — read the conversation tree.
-- `write` / `edit` / `bash` — mutate it. Every accepted change records a child
-  commit automatically; there is no staging step and nothing to commit by hand.
+- `write` / `edit` — mutate it. Every accepted change records a child commit
+  automatically; there is no staging step and nothing to commit by hand.
 - `import_source` — above.
-- `caos-build` / `caos-test` — run the imported repo's own build and tests,
-  when it defines them under `caos-tools/`.
 - `merge` — merge a commit into a source tree.
 - `publish_source` — push a source tree's commit to a branch on GitHub.
-- `run_tool(path="caos-std/github")` — one GitHub API call (`method`, `path`,
-  optional JSON `body`): open a PR, change its base, read its state. A run
-  fails only when no response came back, and a write may still have arrived,
-  so read the state with a GET before resending.
+- `log` / `show` / `diff` — a source tree's git history.
 
-`bash` needs conversation-relative paths declared for the content it touches,
-and `mv`/`cp -a` preserve a source tree's commit identity where a plain copy
-would not.
+**Std tools**, reached by path with `run_tool(path="caos-std/<name>",
+arguments={...})`. There is no `bash` tool by name; shell is one of these.
+`tool_help(path="caos-std/<name>")` prints a tool's parameters. `caos-std/`
+exists only in the evaluated tree, so `read` and `ls` cannot see it directly:
+`eval_path(path="caos-std")` returns a tree hash, and
+`read(root=<hash>, file-path="README.md")` is the index of every std tool. The
+ones you will want:
+
+- `caos-std/bash-tool` — `sh -c` from the conversation root (`cmd`, optional
+  `cwd`, and `paths`: the conversation-relative content the command reads or
+  edits, which stays lazy otherwise). Its writes are recorded like `write`'s.
+  `mv`/`cp -a` preserve a source tree's commit identity where a plain copy
+  would not.
+- `caos-std/create-squashed-stack` — squash a stack to one commit per layer,
+  for publishing.
+- `caos-std/github` — one GitHub API call (`method`, `path`, optional JSON
+  `body`): open a PR, change its base, read its state. A run fails only when
+  no response came back, and a write may still have arrived, so read the
+  state with a GET before resending.
+
+The imported repo may define its own build and test tools under
+`caos-tools/`; run them the same way, by their path inside the source tree.
 
 ## What is configured here
 
