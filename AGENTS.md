@@ -10,9 +10,10 @@ tools do not read this container's filesystem — they read the conversation
 tree, which starts out holding almost nothing.
 
 List it with `ls path="/"`. A bare `ls` with no path errors
-(`` `path` names no path ``), and the near-empty result — `.caos/` and
-`code/` — is what a fresh conversation is supposed to look like, not a sign
-that anything went wrong.
+(`` `path` names no path ``). A fresh conversation holds `.caos/` and this
+client repo's own handful of files (`AGENTS.md`, `flake.nix`, `.caos-expr`
+and so on) — no code to work on. That is what it is supposed to look like,
+not a sign that anything went wrong.
 
 ## Start by importing what you were asked to work on
 
