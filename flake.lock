@@ -26,7 +26,7 @@
       "locked": {
         "owner": "Metta-AI",
         "repo": "caos",
-        "rev": "180033b2f30114e5645ac61489a2d21d321ce2a8",
+        "rev": "4e0f11a9b189dd84bfc673322b5b67130efeae9d",
         "type": "github"
       },
       "original": {
@@ -90,8 +90,8 @@
         "lastModified": 1790046670,
         "narHash": "sha256-MYiI+CzL0tuWgRPjGsKCDHqYs2T3OzMlMQWOYWG0qso=",
         "owner": "NixOS",
-        "repo": "nixpkgs",
         "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
+        "repo": "nixpkgs",
         "type": "github"
       },
       "original": {
