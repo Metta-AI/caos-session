@@ -26,12 +26,12 @@
       "locked": {
         "owner": "Metta-AI",
         "repo": "caos",
-        "rev": "6596c7354709ce178f86cbea80a81cdcad9a490c",
+        "rev": "180033b2f30114e5645ac61489a2d21d321ce2a8",
         "type": "github"
       },
       "original": {
         "owner": "Metta-AI",
-        "ref": "claude/bash-docs",
+        "ref": "claude/direct-tools",
         "repo": "caos",
         "type": "github"
       }
@@ -90,8 +90,8 @@
         "lastModified": 1790046670,
         "narHash": "sha256-MYiI+CzL0tuWgRPjGsKCDHqYs2T3OzMlMQWOYWG0qso=",
         "owner": "NixOS",
-        "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
         "repo": "nixpkgs",
+        "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
         "type": "github"
       },
       "original": {

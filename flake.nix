@@ -16,7 +16,7 @@
 
     # EXPERIMENT (this branch only): which std/ is mounted at caos-std/. The
     # client above is still the `caos` input; this one is read by `.caos-expr`.
-    caosstd.url = "github:Metta-AI/caos?ref=claude/bash-docs";
+    caosstd.url = "github:Metta-AI/caos?ref=claude/direct-tools";
   };
 
   # Nothing is built from here. The flake exists so the pin has somewhere to

@@ -22,6 +22,7 @@
 #
 # THIS BRANCH uses `--input=caosstd`, not `caos`: `caos` still pins the client
 # release (flake.lock), and `caosstd` pins only which std/ is mounted, so a
-# branch of caos that changes documentation can be tried with no release build.
-# To go back to one pin, make `--input=caos` and both revs the `caos` rev.
-run --base:@@=github:Metta-AI/caos?rev=6596c7354709ce178f86cbea80a81cdcad9a490c&dir=std/flake-input-loader --in:@=. --expr=$CAOS_EXPR --input=caosstd --input-tree:@@=github:Metta-AI/caos?rev=6596c7354709ce178f86cbea80a81cdcad9a490c&dir=std --output-path=caos-std
+# branch of caos that changes tools or documentation can be tried with no
+# release build. To go back to one pin, make `--input=caos` and both revs the
+# `caos` rev.
+run --base:@@=github:Metta-AI/caos?rev=180033b2f30114e5645ac61489a2d21d321ce2a8&dir=std/flake-input-loader --in:@=. --expr=$CAOS_EXPR --input=caosstd --input-tree:@@=github:Metta-AI/caos?rev=180033b2f30114e5645ac61489a2d21d321ce2a8&dir=std --output-path=caos-std
