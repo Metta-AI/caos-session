@@ -108,7 +108,6 @@ Only things an error message does not teach:
 - **Edit and publish a source tree** (`imports/...` or `feature/...`), not
   the conversation root: an `edit` on a bare path succeeds but changes only
   scratch files, and `publish_source` rejects `.`.
-- `caos-std/github` has no token granted by default (public reads only).
 
 ## What is configured here
 
