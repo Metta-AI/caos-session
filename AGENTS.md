@@ -125,9 +125,6 @@ Reviewed from recorded conversations; each of these cost a session time.
   text) and `call-id` (one call in full); check `tool_help` for them. Older
   builds take only `hash` and `width`, and `call` was never accepted: it is a
   reserved name, so its `@param` was silently dropped.
-- **Argument names are hyphenated:** `old-string`, `new-string`, `file-path`,
-  `replace-all`. Using `old_string` fails with "edit needs a non-empty
-  `old-string`"; the tool reports the call as complete although it errored.
 - **`log`, `show` and `diff` need `source_tree`.** Passing only `root` fails
   with "specify the source_tree path for this Git operation".
 - **`grep` needs a `pattern`**, and `ls` of a path an expression produces
