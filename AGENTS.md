@@ -103,14 +103,6 @@ The imported repo may define its own build and test tools under
 
 Only things an error message does not teach:
 
-- **Run `caos-test` with bare test names**: `only="llm-call"`, not
-  `only="tests/hello"`. A path-style name fails after a ~15s stack start with
-  "--only matched no tests" (three sessions lost a run to this). Separate
-  several names with spaces. A full suite takes 200-290s, so run `only=` while
-  iterating.
-- **`llm-call` and `llm-step` tests are flaky** ("the stub received no request
-  at all"). Rerun once with a fresh `test-salt` before treating a failure as
-  yours.
 - **Subagents have no file tools** and cannot read the local file a
   too-large tool result is saved to. Do that reading yourself.
 - **Edit and publish a source tree** (`imports/...` or `feature/...`), not
