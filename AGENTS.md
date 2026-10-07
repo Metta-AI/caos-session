@@ -101,12 +101,9 @@ The imported repo may define its own build and test tools under
 
 ## Pitfalls seen in earlier sessions
 
-Reviewed from recorded conversations; each of these cost a session time.
+Reviewed from recorded conversations. These are the ones an error message
+does not explain.
 
-- **Do not guess a std tool's name.** They are `caos-conversation-list` (singular
-  `conversation`) and `caos-conversation`, not `caos-conversations-list`. A wrong
-  name fails with the list of real ones, but read `README.md` from
-  `eval_path(path="caos-std")` first.
 - **Do not delegate to subagents that need to read files.** Bash, Read and Grep
   are off here *and in subagents*, so a subagent cannot open anything outside
   the caos tree. Three sessions sent a subagent to read a large saved output and
@@ -125,12 +122,6 @@ Reviewed from recorded conversations; each of these cost a session time.
   text) and `call-id` (one call in full); check `tool_help` for them. Older
   builds take only `hash` and `width`, and `call` was never accepted: it is a
   reserved name, so its `@param` was silently dropped.
-- **`log`, `show` and `diff` need `source_tree`.** Passing only `root` fails
-  with "specify the source_tree path for this Git operation".
-- **`grep` needs a `pattern`**, and `ls` of a path an expression produces
-  (for example a `caos-std/...` mount) needs `eval_path` first.
-- **Look before you `ls` a guessed path.** In the caos repo the Claude Code
-  integration is `integrations/claude-code/`, not `integrations/claude/`.
 - **`caos-std/github` has no token granted by default**, so it only does public
   reads: creating a gist or PR returns `401`. Use the `secret readers:` line
   in the first prompt (or `caos_status`) to see whether a key is configured
