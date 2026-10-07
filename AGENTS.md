@@ -99,6 +99,30 @@ ones you will want:
 The imported repo may define its own build and test tools under
 `caos-tools/`; run them the same way, by their path inside the source tree.
 
+## Pitfalls seen in earlier sessions
+
+Only things an error message does not teach:
+
+- **Run `caos-test` with bare test names**: `only="llm-call"`, not
+  `only="tests/hello"`. A path-style name fails after a ~15s stack start with
+  "--only matched no tests" (three sessions lost a run to this). Separate
+  several names with spaces. A full suite takes 200-290s, so run `only=` while
+  iterating.
+- **`llm-call` and `llm-step` tests are flaky** ("the stub received no request
+  at all"). Rerun once with a fresh `test-salt` before treating a failure as
+  yours.
+- **Subagents have no file tools** and cannot read the local file a
+  too-large tool result is saved to. Do that reading yourself.
+- **Edit and publish a source tree** (`imports/...` or `feature/...`), not
+  the conversation root: an `edit` on a bare path succeeds but changes only
+  scratch files, and `publish_source` rejects `.`.
+- **Do not edit `integrations/claude-code/drive` in the tree you drive with.**
+  `drive` gets its OAuth token only while its image matches a secret reader,
+  so an edited copy fails with "no token at /secret/claude-oauth-token". Run
+  `drive` from an unedited import and edit a `copy`.
+- `caos-std/github` has no token granted by default (public reads only), and
+  `caos-stack start` needs a `relay` argument.
+
 ## What is configured here
 
 | file | what it decides |
