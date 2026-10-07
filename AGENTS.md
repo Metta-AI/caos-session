@@ -99,6 +99,49 @@ ones you will want:
 The imported repo may define its own build and test tools under
 `caos-tools/`; run them the same way, by their path inside the source tree.
 
+## Pitfalls seen in earlier sessions
+
+Reviewed from recorded conversations; each of these cost a session time.
+
+- **Do not guess a std tool's name.** They are `caos-conversation-list` (singular
+  `conversation`) and `caos-conversation`, not `caos-conversations-list`. A wrong
+  name fails with the list of real ones, but read `README.md` from
+  `eval_path(path="caos-std")` first.
+- **Do not delegate to subagents that need to read files.** Bash, Read and Grep
+  are off here *and in subagents*, so a subagent cannot open anything outside
+  the caos tree. Three sessions sent a subagent to read a large saved output and
+  got back "I read 0 lines". Do the reading yourself with the caos tools.
+- **A tool result over the harness size limit is saved to a local file you
+  cannot read** (`/root/.claude/projects/.../tool-results/*.txt`; `read` says
+  it is "not in the conversation tree"). `caos-conversation` hits this on any
+  conversation of more than a few dozen calls, and `width` does **not** help:
+  it cuts only tool-call arguments and results, not the user and assistant
+  messages, which make up most of the output. Instead, read the conversation
+  tree directly: `ls(path=".caos/transcript", root=<tip hash>)`, then `read`
+  single entries, or `grep` that directory for a narrow pattern. Use
+  `caos-conversation-list` with a small `limit` or a `filter`, and
+  `caos-conversation` for short conversations or with `call=` for one call.
+- **`log`, `show` and `diff` need `source_tree`.** Passing only `root` fails
+  with "specify the source_tree path for this Git operation".
+- **`grep` needs a `pattern`**, and `ls` of a path an expression produces
+  (for example a `caos-std/...` mount) needs `eval_path` first.
+- **Look before you `ls` a guessed path.** In the caos repo the Claude Code
+  integration is `integrations/claude-code/`, not `integrations/claude/`.
+- **`caos-std/github` has no token granted by default**, so it only does public
+  reads: creating a gist or PR returns `401`. Use the `secret readers:` line
+  in the first prompt (or `caos_status`) to see whether a key is configured
+  before planning a write.
+- **A stack started with the caos repo's `std/caos-stack` needs a relay**:
+  `start` without one fails with "start needs a relay: a caos:// ticket is reached
+  through a relay of your own". Pass `relay=<url of a relay on port 80 or 443
+  that both this container and the cloud session can reach>`; n0's relays are
+  never used. Without a relay you cannot start a stack from a session, so ask
+  the user for one rather than retrying.
+- **Edit and publish a source tree, not the conversation root.** `edit` on a
+  bare path like `AGENTS.md` changes only this conversation's scratch files.
+  Import the repo, `copy` it to `feature/...`, edit there, and
+  `publish_source` that path.
+
 ## What is configured here
 
 | file | what it decides |
