@@ -108,12 +108,7 @@ Only things an error message does not teach:
 - **Edit and publish a source tree** (`imports/...` or `feature/...`), not
   the conversation root: an `edit` on a bare path succeeds but changes only
   scratch files, and `publish_source` rejects `.`.
-- **Do not edit `integrations/claude-code/drive` in the tree you drive with.**
-  `drive` gets its OAuth token only while its image matches a secret reader,
-  so an edited copy fails with "no token at /secret/claude-oauth-token". Run
-  `drive` from an unedited import and edit a `copy`.
-- `caos-std/github` has no token granted by default (public reads only), and
-  `caos-stack start` needs a `relay` argument.
+- `caos-std/github` has no token granted by default (public reads only).
 
 ## What is configured here
 
