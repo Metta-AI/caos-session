@@ -99,6 +99,16 @@ ones you will want:
 The imported repo may define its own build and test tools under
 `caos-tools/`; run them the same way, by their path inside the source tree.
 
+## Pitfalls seen in earlier sessions
+
+Only things an error message does not teach:
+
+- **Subagents have no file tools** and cannot read the local file a
+  too-large tool result is saved to. Do that reading yourself.
+- **Edit and publish a source tree** (`imports/...` or `feature/...`), not
+  the conversation root: an `edit` on a bare path succeeds but changes only
+  scratch files, and `publish_source` rejects `.`.
+
 ## What is configured here
 
 | file | what it decides |
