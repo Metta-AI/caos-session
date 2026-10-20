@@ -46,8 +46,10 @@ base with a newer upstream tip is the one case that touches it; `GIT.md` shows
 how.)
 
 This is only the short version. For stacks of layers, updating the base,
-merging, squashing, publishing and PRs, read `caos-std/GIT.md` first:
-`read(root=<hash from eval_path("caos-std")>, file-path="GIT.md")`.
+merging, squashing, publishing, PRs and creating a new repo, read
+`caos-std/GIT.md` first:
+`read(root=<hash from eval_path("caos-std")>, file-path="GIT.md")`. The name is
+upper case; `git.md` is "no such path".
 
 **If the user gives a bare name** rather than a URL, resolve it before
 importing rather than guessing: a wrong fork imports cleanly and wastes the
