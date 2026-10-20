@@ -113,7 +113,7 @@ Only things an error message does not teach:
 
 - **Subagents have no file tools** and cannot read the local file a
   too-large tool result is saved to. Do that reading yourself.
-- **Edit and publish a source tree** (`imports/...` or `feature/...`), not
+- **Edit and publish a source tree** (`sources/<repo>/...`), not
   the conversation root: an `edit` on a bare path succeeds but changes only
   scratch files, and `publish_source` rejects `.`.
 
