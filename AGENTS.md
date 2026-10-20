@@ -21,7 +21,7 @@ When the user names a repository, import it:
 ```
 import_source(source="https://github.com/<owner>/<repo>.git",
               revision="main",
-              into="imports/<repo>/base")
+              into="sources/<repo>/00-base")
 ```
 
 The server fetches it directly from GitHub — nothing is cloned into this
@@ -29,17 +29,25 @@ container and nothing is uploaded from it, so a large repository costs about
 the same as a small one. Omit `revision` for the default branch. Public
 repositories need no credentials.
 
-Then copy the snapshot to the boundary you will edit, and leave the import
-untouched as the record of where you started:
+Everything for one repo lives in a single directory, `sources/<repo>/`. Do not
+use a separate `imports/` directory. Copy the base to a scratch layer, edit
+that, and `move` it to a named layer when a chunk of work is finished:
 
 ```
-copy(from="imports/<repo>/base", to="feature/01-change")
+copy(from="sources/<repo>/00-base", to="sources/<repo>/99-dirty")
+... edit sources/<repo>/99-dirty ...
+move(from="sources/<repo>/99-dirty", to="sources/<repo>/01-<name>")
 ```
 
-`copy` creates `feature/` for you and copies the snapshot as it is, with its
-history. Edit `feature/01-change`. Keep `imports/<repo>/base` exactly as
-imported — it is what any later diff, merge or publication is measured
-against.
+Never edit `00-base`: it is the record of where you started, and any later
+diff, merge or publication is measured against it. Only `00-base` has a
+`.source.json` provenance file beside it; leave that alone too. (Replacing the
+base with a newer upstream tip is the one case that touches it; `GIT.md` shows
+how.)
+
+This is only the short version. For stacks of layers, updating the base,
+merging, squashing, publishing and PRs, read `caos-std/GIT.md` first:
+`read(root=<hash from eval_path("caos-std")>, file-path="GIT.md")`.
 
 **If the user gives a bare name** rather than a URL, resolve it before
 importing rather than guessing: a wrong fork imports cleanly and wastes the
@@ -112,7 +120,7 @@ Only things an error message does not teach:
 
 - **Subagents have no file tools** and cannot read the local file a
   too-large tool result is saved to. Do that reading yourself.
-- **Edit and publish a source tree** (`imports/...` or `feature/...`), not
+- **Edit and publish a source tree** (`sources/<repo>/...`), not
   the conversation root: an `edit` on a bare path succeeds but changes only
   scratch files, and `publish_source` rejects `.`.
 
