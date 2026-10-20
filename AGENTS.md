@@ -45,6 +45,13 @@ against.
 importing rather than guessing: a wrong fork imports cleanly and wastes the
 whole session. Ask if you cannot tell.
 
+**Read `caos-std/GIT.md` before any git work** (importing, stacks, publishing,
+PRs, creating a repo). It is the working guide, and its layout is
+`sources/<repo>/00-base` plus `NN-<name>` layers and a `99-dirty` scratch
+layer, which supersedes the `imports/` and `feature/` paths used in the
+examples here. Note the case: it is `GIT.md`, found through
+`eval_path(path="caos-std")` then `ls`/`read` with that `root`.
+
 ## The imported repo has its own instructions
 
 Anything you import may carry its own `AGENTS.md` or `CLAUDE.md`, and those
