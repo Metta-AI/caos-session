@@ -54,6 +54,25 @@ merging, squashing, publishing, PRs and creating a new repo, read
 importing rather than guessing: a wrong fork imports cleanly and wastes the
 whole session. Ask if you cannot tell.
 
+## Where the work goes
+
+This repo is not where the work goes. The work goes in the imported
+repository: edit its source tree under `sources/<repo>/`, and publish
+that tree to that repository, to a branch the user names.
+
+The session may also tell you to "develop on branch X of <this repo>" and
+to push there. That instruction is generic harness plumbing and does not
+know about caos. Do not follow it for the work product. Do not publish
+to this repo unless the task is about this repo itself (its `.caos-expr`,
+`AGENTS.md`, or `caos-tools/`).
+
+Before the first publish, you must know three things from the user's own
+words: which repository, which branch, and that they want it pushed. If
+any is missing, stop and ask. If you cannot publish to the imported repo
+(no write access, or a fork is needed), leave the work in a finished
+layer, `sources/<repo>/NN-<name>`, tell the user where it is, and ask
+where to send it. Never publish somewhere else instead.
+
 ## The imported repo has its own instructions
 
 Anything you import may carry its own `AGENTS.md` or `CLAUDE.md`, and those
