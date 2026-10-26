@@ -1,0 +1,8 @@
+# Phase 2b: build catm from hex2-0.
+#
+# catm output input1 ... inputN concatenates files without needing cat or
+# shell redirection.
+SCRIPT=<<END
+./hex2-0 ./AMD64/catm_AMD64.hex2 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --hex2-0:@=DEEP-DEPS/hex2-0

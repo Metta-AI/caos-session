@@ -1,0 +1,21 @@
+# Phase 7: build M1-0 from C sources.
+#
+# M1 is the portable successor to M0. This is the first program built with
+# debug info, and the last to need catm and M0: from here on M1 and hex2 take
+# several inputs themselves.
+SCRIPT=<<END
+./M2 --architecture amd64 \
+	-f ./M2libc/amd64/linux/bootstrap.c \
+	-f ./M2libc/bootstrappable.c \
+	-f ./mescc-tools/stringify.c \
+	-f ./mescc-tools/M1-macro.c \
+	--bootstrap-mode \
+	--debug \
+	-o ./M1-macro-0.M1
+./blood-elf-0 --64 --little-endian -f ./M1-macro-0.M1 -o ./M1-macro-0-footer.M1
+./catm ./M1-macro-0-0.M1 ./M2libc/amd64/amd64_defs.M1 ./M2libc/amd64/libc-core.M1 ./M1-macro-0.M1 ./M1-macro-0-footer.M1
+./M0 ./M1-macro-0-0.M1 ./M1-macro-0.hex2
+./catm ./M1-macro-0-0.hex2 ./M2libc/amd64/ELF-amd64-debug.hex2 ./M1-macro-0.hex2
+./hex2-0 ./M1-macro-0-0.hex2 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --blood-elf-0:@=DEEP-DEPS/blood-elf-0 --catm:@=DEEP-DEPS/catm --M2:@=DEEP-DEPS/M2 --M0:@=DEEP-DEPS/M0 --hex2-0:@=DEEP-DEPS/hex2-0

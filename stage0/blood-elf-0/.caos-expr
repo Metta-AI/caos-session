@@ -1,0 +1,19 @@
+# Phase 6: build blood-elf-0 with M2-Planet.
+#
+# blood-elf adds DWARF stubs to M1 programs, so that what is built next can be
+# debugged. This copy has none itself, hence the -0: it is the last piece built
+# without debug info, and not part of the final result.
+SCRIPT=<<END
+./M2 --architecture amd64 \
+	-f ./M2libc/amd64/linux/bootstrap.c \
+	-f ./M2libc/bootstrappable.c \
+	-f ./mescc-tools/stringify.c \
+	-f ./mescc-tools/blood-elf.c \
+	--bootstrap-mode \
+	-o ./blood-elf-0.M1
+./catm ./blood-elf-0-0.M1 ./M2libc/amd64/amd64_defs.M1 ./M2libc/amd64/libc-core.M1 ./blood-elf-0.M1
+./M0 ./blood-elf-0-0.M1 ./blood-elf-0.hex2
+./catm ./blood-elf-0-0.hex2 ./M2libc/amd64/ELF-amd64.hex2 ./blood-elf-0.hex2
+./hex2-0 ./blood-elf-0-0.hex2 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --catm:@=DEEP-DEPS/catm --M2:@=DEEP-DEPS/M2 --M0:@=DEEP-DEPS/M0 --hex2-0:@=DEEP-DEPS/hex2-0

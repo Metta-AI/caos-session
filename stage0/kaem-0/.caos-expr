@@ -1,0 +1,7 @@
+# Phase 0b: build the minimal kaem from hex0.
+#
+# It runs commands and nothing else, which is all the next phases ask of it.
+SCRIPT=<<END
+./hex0 ./AMD64/kaem-minimal.hex0 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --hex0:@=DEEP-DEPS/hex0

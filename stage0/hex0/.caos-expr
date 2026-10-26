@@ -1,0 +1,9 @@
+# Phase 0: rebuild hex0 from the hex0 seed.
+#
+# The seed assembles its own source. By definition the result is the seed
+# again, byte for byte, which is the check that the seed is untainted.
+SCRIPT=<<END
+./bootstrap-seeds/POSIX/AMD64/hex0-seed ./AMD64/hex0_AMD64.hex0 ./out
+cmp ./out ./bootstrap-seeds/POSIX/AMD64/hex0-seed
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT

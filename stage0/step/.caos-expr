@@ -1,0 +1,10 @@
+# A step: the bash worker, curried onto the script that runs a kaem script, with
+# stage0-posix's sources already in place where its kaem scripts look for them.
+#
+# Each source is pinned to the commit stage0-posix's own submodules record.
+STEP=curry --base:@@=github:Metta-AI/caos?rev=ca150247b2982fd7bf119371aea215def5a433bb&dir=std/bash --worker1:@=step.sh
+SEEDS=curry --base=$STEP --bootstrap-seeds:@@=github:oriansj/bootstrap-seeds?rev=cedec6b8066d1db229b6c77d42d120a23c6980ed
+AMD64=curry --base=$SEEDS --AMD64:@@=github:oriansj/stage0-posix-amd64?rev=82efa0d6be1c9bb993a7a62af1cccd8d2cda91f6
+M2LIBC=curry --base=$AMD64 --M2libc:@@=github:oriansj/M2libc?rev=68a23cfd05d5a355ba7a30c770d684cbe86fcc4e
+M2_PLANET=curry --base=$M2LIBC --M2-Planet:@@=github:oriansj/M2-Planet?rev=bd2fe4b0659fd0ad3f476a5ad0ef801bd134665d
+curry --base=$M2_PLANET --mescc-tools:@@=github:oriansj/mescc-tools?rev=5adfbf3364261a77109878a56b100aeeb6ef9ac4

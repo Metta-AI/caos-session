@@ -1,0 +1,9 @@
+# Phase 3: build M0 from hex2-0.
+#
+# M0 is an assembler for this architecture alone, just capable enough to avoid
+# writing a portable one in hex2. M1 replaces it later.
+SCRIPT=<<END
+./catm ./M0.hex2 ./AMD64/ELF-amd64.hex2 ./AMD64/M0_AMD64.hex2
+./hex2-0 ./M0.hex2 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --catm:@=DEEP-DEPS/catm --hex2-0:@=DEEP-DEPS/hex2-0

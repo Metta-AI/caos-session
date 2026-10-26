@@ -1,0 +1,37 @@
+# Phase 8: build hex2-1 from C sources.
+#
+# The portable hex2 linker, compiled by M2-Planet and assembled by M1-0. It
+# retires the handwritten hex2-0, which is why this is the last phase to use it.
+SCRIPT=<<END
+./M2 --architecture amd64 \
+	-f ./M2libc/sys/types.h \
+	-f ./M2libc/stddef.h \
+	-f ./M2libc/sys/utsname.h \
+	-f ./M2libc/amd64/linux/unistd.c \
+	-f ./M2libc/amd64/linux/fcntl.c \
+	-f ./M2libc/fcntl.c \
+	-f ./M2libc/amd64/linux/sys/stat.c \
+	-f ./M2libc/ctype.c \
+	-f ./M2libc/stdlib.c \
+	-f ./M2libc/stdarg.h \
+	-f ./M2libc/stdio.h \
+	-f ./M2libc/stdio.c \
+	-f ./M2libc/bootstrappable.c \
+	-f ./mescc-tools/hex2.h \
+	-f ./mescc-tools/hex2_linker.c \
+	-f ./mescc-tools/hex2_word.c \
+	-f ./mescc-tools/hex2.c \
+	--debug \
+	-o ./hex2_linker-1.M1
+./blood-elf-0 --64 --little-endian -f ./hex2_linker-1.M1 -o ./hex2_linker-1-footer.M1
+./M1-0 --architecture amd64 \
+	--little-endian \
+	-f ./M2libc/amd64/amd64_defs.M1 \
+	-f ./M2libc/amd64/libc-full.M1 \
+	-f ./hex2_linker-1.M1 \
+	-f ./hex2_linker-1-footer.M1 \
+	-o ./hex2_linker-1.hex2
+./catm ./hex2_linker-1-0.hex2 ./M2libc/amd64/ELF-amd64-debug.hex2 ./hex2_linker-1.hex2
+./hex2-0 ./hex2_linker-1-0.hex2 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --blood-elf-0:@=DEEP-DEPS/blood-elf-0 --catm:@=DEEP-DEPS/catm --M1-0:@=DEEP-DEPS/M1-0 --M2:@=DEEP-DEPS/M2 --hex2-0:@=DEEP-DEPS/hex2-0

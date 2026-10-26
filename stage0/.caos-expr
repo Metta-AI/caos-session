@@ -1,0 +1,8 @@
+# stage0: the bootstrap, one directory per product.
+#
+# Every directory below names what it builds from in a DEPS file; deep-deps
+# mounts those at DEEP-DEPS/<name>, so a later phase reaches the result of an
+# earlier one (and the sources they all read) by plain descent.
+#
+# The pin is caos' own, and must match flake.lock.
+run --base:@@=github:Metta-AI/caos?rev=ca150247b2982fd7bf119371aea215def5a433bb&dir=std/deep-deps --in:@=.

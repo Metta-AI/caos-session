@@ -1,0 +1,7 @@
+# Phase 1: build hex1 from hex0.
+#
+# hex1 adds single-character labels to hex0.
+SCRIPT=<<END
+./hex0 ./AMD64/hex1_AMD64.hex0 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --hex0:@=DEEP-DEPS/hex0

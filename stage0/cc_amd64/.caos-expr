@@ -1,0 +1,10 @@
+# Phase 4: build cc_amd64 from M0.
+#
+# A C compiler written in this architecture's M0 assembly. It understands just
+# enough C to compile M2-Planet.
+SCRIPT=<<END
+./M0 ./AMD64/cc_amd64.M1 ./cc_amd64.hex2
+./catm ./cc_amd64-0.hex2 ./AMD64/ELF-amd64.hex2 ./cc_amd64.hex2
+./hex2-0 ./cc_amd64-0.hex2 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --catm:@=DEEP-DEPS/catm --M0:@=DEEP-DEPS/M0 --hex2-0:@=DEEP-DEPS/hex2-0

@@ -1,0 +1,9 @@
+# Phase 2: build hex2-0 from hex1.
+#
+# hex2 adds long labels and absolute addresses, which makes it a linker. This
+# one is minimal and only works on the architecture it was built on; a much
+# better hex2 replaces it later.
+SCRIPT=<<END
+./hex1 ./AMD64/hex2_AMD64.hex1 ./out
+END
+run --base:@=DEEP-DEPS/step --script=$SCRIPT --hex1:@=DEEP-DEPS/hex1
