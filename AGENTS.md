@@ -131,6 +131,12 @@ The imported repo may define its own build and test tools under
 
 Only things an error message does not teach:
 
+- **Workers have the network.** A std tool, or a tool a repo defines under
+  `caos-tools/`, runs in a container that reaches GitHub, package registries
+  and the Anthropic API; nothing fences egress. Earlier sessions assumed the
+  opposite and designed around it (reimplementing a fetch instead of running
+  the tool that fetches). Where a worker is offline, that is its own build
+  choice (`cargo` builds `--offline`), not a property of the container.
 - **Subagents have no file tools** and cannot read the local file a
   too-large tool result is saved to. Do that reading yourself.
 - **Edit and publish a source tree** (`sources/<repo>/...`), not
