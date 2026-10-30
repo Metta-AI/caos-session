@@ -17,7 +17,7 @@ look like, not a sign that anything went wrong.
 ## Start by importing what you were asked to work on
 
 When the user names a repository, import it. The built-in tools are only
-`help`, `eval_path`, `run`, `start` and `result`; `import-source` is not one
+`help`, `eval-path`, `run`, `start` and `result`; `import-source` is not one
 of them, it is a std tool, so run it through `run`:
 
 ```
