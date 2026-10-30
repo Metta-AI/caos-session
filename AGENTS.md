@@ -110,7 +110,7 @@ before the first use of any tool in a session, since the parameter name is
 not uniform (`caos-std/ls` takes `path`; `caos-std/read` instead takes
 `file-path`, and the tree to read it from is `in`, not `root`). `caos-std/`
 exists only in the evaluated tree, so plain paths cannot see it directly:
-`eval_path(path="caos-std")` returns a tree hash, and
+`eval-path(path="caos-std")` returns a tree hash, and
 `run(path="caos-std/read", arguments={"in": <hash>, "file-path": "README.md"})`
 reads the index of every std tool. The std tools you will want most:
 
