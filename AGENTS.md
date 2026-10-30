@@ -93,16 +93,15 @@ tools are switched off, so there is no second set to choose between.
 
 **Only five tools are built in: `help`, `eval_path`, `run`, `start` and
 `result`.** There is no separately-registered `read`, `ls`, `grep`, `write`,
-`edit`, `copy`, `move`, `remove`, `import_source`, `merge`, `publish_source`,
+`edit`, `copy`, `move`, `remove`, `import-source`, `merge`, `publish-source`,
 `log`, `show` or `diff` tool, and no `bash` tool. Every one of those, and
 everything else caos can do, is a directory under `caos-std/`, run with
 `run(path="caos-std/<name>", arguments={...})` (or `start`, then `result`, for
 a call that takes a while). The directory names are hyphenated
-(`caos-std/import-source`, `caos-std/publish-source`), not the underscored
-verb this file otherwise uses for readability (`import_source`): calling
-`help(path="import_source")` fails with "no such path" because that path does
-not exist, not because the tool is unavailable — the real path is
-`caos-std/import-source`.
+(`caos-std/import-source`, `caos-std/publish-source`): calling
+`help(path="import-source")` fails with "no such path" because that bare path
+does not exist at the conversation root, not because the tool is unavailable
+— the real path is `caos-std/import-source`.
 
 `help()` with no path shows the session overview and the directories at the
 conversation root (`.caos` and `caos-std` in a fresh conversation).
