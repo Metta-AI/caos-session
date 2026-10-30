@@ -90,60 +90,49 @@ session, not the code.
 The caos tools are the ones prefixed `caos`; the harness's own file and shell
 tools are switched off, so there is no second set to choose between.
 
-**Check what your harness actually registers before assuming a two-tier
-split.** Some harnesses (an MCP tool gateway, for instance) register only a
-handful of entry points — typically named along the lines of `help`,
-`eval_path`, `run`, `start`, `result` — and expose none of `read`, `ls`,
-`grep`, `write`, `edit`, `copy`, `move`, `remove`, `import_source`, `merge`,
-`publish_source`, `log`, `show`, `diff` as separately callable tools. In that
-kind of harness every one of those, with no exception, is a directory under
-`caos-std/` reached the same way as any other std tool: through `run` (or
-`start`/`result` for a long call), e.g. `run(path="caos-std/import-source",
-arguments={...})`. Note the path is hyphenated (`import-source`,
-`publish-source`), even though this file's prose uses the underscored verb
-(`import_source`) for readability. Calling `help()` with no path first shows
-the session overview and confirms which directories exist (`.caos` and
-`caos-std` at the root of a fresh conversation); calling `help(path="<name>")`
-on a bare guessed name such as `import_source` fails with "no such path" if
-your harness does not register it directly — that failure means use the
-`caos-std/<hyphenated-name>` path, not that the tool does not exist.
+**Only five tools are built in: `help`, `eval_path`, `run`, `start` and
+`result`.** There is no separately-registered `read`, `ls`, `grep`, `write`,
+`edit`, `copy`, `move`, `remove`, `import_source`, `merge`, `publish_source`,
+`log`, `show` or `diff` tool, and no `bash` tool. Every one of those, and
+everything else caos can do, is a directory under `caos-std/`, run with
+`run(path="caos-std/<name>", arguments={...})` (or `start`, then `result`, for
+a call that takes a while). The directory names are hyphenated
+(`caos-std/import-source`, `caos-std/publish-source`), not the underscored
+verb this file otherwise uses for readability (`import_source`): calling
+`help(path="import_source")` fails with "no such path" because that path does
+not exist, not because the tool is unavailable — the real path is
+`caos-std/import-source`.
 
-Other harnesses (a CLI client with its own MCP server) do register the first
-group below as first-class tools, called by name directly. Try that first if
-your tool list shows them; fall back to the `caos-std/` path above if it does
-not.
+`help()` with no path shows the session overview and the directories at the
+conversation root (`.caos` and `caos-std` in a fresh conversation).
+`help(path="caos-std/<name>")` prints a std tool's exact parameters — call it
+before the first use of any tool in a session, since the parameter name is
+not uniform (`caos-std/ls` takes `path`; `caos-std/read` instead takes
+`file-path`, and the tree to read it from is `in`, not `root`). `caos-std/`
+exists only in the evaluated tree, so plain paths cannot see it directly:
+`eval_path(path="caos-std")` returns a tree hash, and
+`run(path="caos-std/read", arguments={"in": <hash>, "file-path": "README.md"})`
+reads the index of every std tool. The std tools you will want most:
 
-**Registered tools** (where the harness provides them), called by name:
-
-- `read` / `ls` / `grep` — read the conversation tree.
-- `write` / `edit` — change a file. Every accepted change records a child
-  commit automatically; there is no staging step and nothing to commit by hand.
-  Give the full path from the conversation root (e.g.
+- `caos-std/read` / `caos-std/ls` / `caos-std/grep` — read the conversation
+  tree.
+- `caos-std/write` / `caos-std/edit` — change a file. Every accepted change
+  records a child commit automatically; there is no staging step and nothing
+  to commit by hand. Give the full path from the conversation root (e.g.
   `sources/<repo>/01-change/README.md`) rather than a bare filename plus an
   `in` tree hash: passing `in` to `write`/`edit` has been observed to fail
   with an unrelated-looking `.caos is protocol metadata` error instead of
-  writing the file. `in` is for the read-only tools (`read`, `ls`, `grep`).
-- `copy` / `move` / `remove` — copy, move or delete a file or directory. A
-  source tree stays a source tree. `copy` and `move` create missing parent
-  directories and refuse an existing destination.
-- `import_source` — above.
-- `merge` — merge a commit into a source tree.
-- `publish_source` — push a source tree's commit to a branch on GitHub.
-- `log` / `show` / `diff` — a source tree's git history. There is no `git` in
-  the shell; these are how you see history and changes.
-
-**Std tools**, always reachable by path with `run_tool(path="caos-std/<name>",
-arguments={...})` (`start`/`result` for a long one), regardless of harness.
-There is no `bash` tool by name; shell is one of these.
-`tool_help(path="caos-std/<name>")` prints a tool's parameters — call it
-before the first use of any tool in a session, since the parameter name is
-not uniform (`ls` takes `path`; `read` instead takes `file-path`, and the tree
-to read it from is `in`, not `root`). `caos-std/` exists only in the evaluated
-tree, so `read` and `ls` cannot see it directly:
-`eval_path(path="caos-std")` returns a tree hash, and
-`read(in=<hash>, file-path="README.md")` is the index of every std tool. The
-ones you will want:
-
+  writing the file. `in` is for the read-only tools (`read`/`ls`/`grep`).
+- `caos-std/copy` / `caos-std/move` / `caos-std/remove` — copy, move or delete
+  a file or directory. A source tree stays a source tree. `copy` and `move`
+  create missing parent directories and refuse an existing destination.
+- `caos-std/import-source` — above.
+- `caos-std/merge` — merge a commit into a source tree.
+- `caos-std/publish-source` — push a source tree's commit to a branch on
+  GitHub.
+- `caos-std/log` / `caos-std/show` / `caos-std/diff` — a source tree's git
+  history. There is no `git` in the shell; these are how you see history and
+  changes.
 - `caos-std/bash-tool` — `sh -c`, for computing something over content (count,
   sort, `diff -r`, run a script). It runs over a scratch copy of the
   conversation tree, which is **lazy**: list in `paths` every existing file or
