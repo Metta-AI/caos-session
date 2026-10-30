@@ -52,7 +52,7 @@ how.)
 This is only the short version. For stacks of layers, updating the base,
 merging, squashing, publishing, PRs and creating a new repo, read
 `caos-std/GIT.md` first:
-`eval_path(path="caos-std")` to get a tree hash, then
+`eval-path(path="caos-std")` to get a tree hash, then
 `run(path="caos-std/read", arguments={"in": <that hash>, "file-path": "GIT.md"})`.
 
 **If the user gives a bare name** rather than a URL, resolve it before
