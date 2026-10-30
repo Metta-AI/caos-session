@@ -34,12 +34,13 @@ repositories need no credentials.
 
 Everything for one repo lives in a single directory, `sources/<repo>/`. Do not
 use a separate `imports/` directory. Copy the base to a scratch layer, edit
-that, and `move` it to a named layer when a chunk of work is finished:
+that, and move it to a named layer when a chunk of work is finished, each
+step run through `run` as above:
 
 ```
-copy(from="sources/<repo>/00-base", to="sources/<repo>/99-dirty")
-... edit sources/<repo>/99-dirty ...
-move(from="sources/<repo>/99-dirty", to="sources/<repo>/01-<name>")
+run(path="caos-std/copy", arguments={"from": "sources/<repo>/00-base", "to": "sources/<repo>/99-dirty"})
+... edit sources/<repo>/99-dirty with caos-std/write or caos-std/edit ...
+run(path="caos-std/move", arguments={"from": "sources/<repo>/99-dirty", "to": "sources/<repo>/01-<name>"})
 ```
 
 Never edit `00-base`: it is the record of where you started, and any later
