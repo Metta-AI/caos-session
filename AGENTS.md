@@ -24,6 +24,11 @@ import_source(source="https://github.com/<owner>/<repo>.git",
               into="sources/<repo>/00-base")
 ```
 
+If your tool list has no tool literally named `import_source`, this is the
+first std tool, not a missing feature: run it as
+`run_tool(path="caos-std/import-source", arguments={"source": ..., "revision": ..., "into": ...})`
+(see "Tools" below).
+
 The server fetches it directly from GitHub — nothing is cloned into this
 container and nothing is uploaded from it, so a large repository costs about
 the same as a small one. Omit `revision` for the default branch. Public
