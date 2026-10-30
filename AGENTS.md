@@ -91,7 +91,7 @@ session, not the code.
 The caos tools are the ones prefixed `caos`; the harness's own file and shell
 tools are switched off, so there is no second set to choose between.
 
-**Only five tools are built in: `help`, `eval_path`, `run`, `start` and
+**Only five tools are built in: `help`, `eval-path`, `run`, `start` and
 `result`.** There is no separately-registered `read`, `ls`, `grep`, `write`,
 `edit`, `copy`, `move`, `remove`, `import-source`, `merge`, `publish-source`,
 `log`, `show` or `diff` tool, and no `bash` tool. Every one of those, and
