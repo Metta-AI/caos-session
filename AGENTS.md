@@ -156,8 +156,16 @@ reads the index of every std tool. The std tools you will want most:
   create missing parent directories and refuse an existing destination.
 - `caos-std/import-source` — above.
 - `caos-std/merge` — merge a commit into a source tree.
-- `caos-std/publish-source` — push a source tree's commit to a branch on
-  GitHub.
+- `caos-std/stack-sync` — bring `sources/<repo>/` up to date with the remote
+  before publishing: new trunk tip into `00-base`, each layer restacked.
+- `caos-std/stack-publish` — **how work leaves the session**: push every
+  layer that has a `.pr.md` to its branch and open or update its PR (see
+  "Every change goes out as a stack").
+- `caos-std/stack-merge-to-master` — merge a reviewed stack's PRs, bottom
+  to top, when the user asks you to merge.
+- `caos-std/ci-status` — what CI says about a branch or a layer.
+- `caos-std/publish-source` — low level: push one commit to one branch, with
+  no PR. `stack-publish` uses it for you. It is not how you publish a change.
 - `caos-std/log` / `caos-std/show` / `caos-std/diff` — a source tree's git
   history. There is no `git` in the shell; these are how you see history and
   changes.
