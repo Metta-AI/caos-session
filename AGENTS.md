@@ -16,12 +16,15 @@ look like, not a sign that anything went wrong.
 
 ## Start by importing what you were asked to work on
 
-When the user names a repository, import it:
+When the user names a repository, import it. The built-in tools are only
+`help`, `eval-path`, `run`, `start` and `result`; `import-source` is not one
+of them, it is a std tool, so run it through `run`:
 
 ```
-import_source(source="https://github.com/<owner>/<repo>.git",
-              revision="main",
-              into="sources/<repo>/00-base")
+run(path="caos-std/import-source",
+    arguments={"source": "https://github.com/<owner>/<repo>.git",
+               "revision": "main",
+               "into": "sources/<repo>/00-base"})
 ```
 
 The server fetches it directly from GitHub — nothing is cloned into this
@@ -31,12 +34,13 @@ repositories need no credentials.
 
 Everything for one repo lives in a single directory, `sources/<repo>/`. Do not
 use a separate `imports/` directory. Copy the base to a scratch layer, edit
-that, and `move` it to a named layer when a chunk of work is finished:
+that, and move it to a named layer when a chunk of work is finished, each
+step run through `run` as above:
 
 ```
-copy(from="sources/<repo>/00-base", to="sources/<repo>/99-dirty")
-... edit sources/<repo>/99-dirty ...
-move(from="sources/<repo>/99-dirty", to="sources/<repo>/01-<name>")
+run(path="caos-std/copy", arguments={"from": "sources/<repo>/00-base", "to": "sources/<repo>/99-dirty"})
+... edit sources/<repo>/99-dirty with caos-std/write or caos-std/edit ...
+run(path="caos-std/move", arguments={"from": "sources/<repo>/99-dirty", "to": "sources/<repo>/01-<name>"})
 ```
 
 Never edit `00-base`: it is the record of where you started, and any later
@@ -48,7 +52,8 @@ how.)
 This is only the short version. For stacks of layers, updating the base,
 merging, squashing, publishing, PRs and creating a new repo, read
 `caos-std/GIT.md` first:
-`read(root=<hash from eval_path("caos-std")>, file-path="GIT.md")`.
+`eval-path(path="caos-std")` to get a tree hash, then
+`run(path="caos-std/read", arguments={"in": <that hash>, "file-path": "GIT.md"})`.
 
 **If the user gives a bare name** rather than a URL, resolve it before
 importing rather than guessing: a wrong fork imports cleanly and wastes the
@@ -84,30 +89,50 @@ session, not the code.
 ## Tools
 
 The caos tools are the ones prefixed `caos`; the harness's own file and shell
-tools are switched off, so there is no second set to choose between. Two kinds:
+tools are switched off, so there is no second set to choose between.
 
-**Registered tools**, called by name:
+**Only five tools are built in: `help`, `eval-path`, `run`, `start` and
+`result`.** There is no separately-registered `read`, `ls`, `grep`, `write`,
+`edit`, `copy`, `move`, `remove`, `import-source`, `merge`, `publish-source`,
+`log`, `show` or `diff` tool, and no `bash` tool. Every one of those, and
+everything else caos can do, is a directory under `caos-std/`, run with
+`run(path="caos-std/<name>", arguments={...})` (or `start`, then `result`, for
+a call that takes a while). The directory names are hyphenated
+(`caos-std/import-source`, `caos-std/publish-source`): calling
+`help(path="import-source")` fails with "no such path" because that bare path
+does not exist at the conversation root, not because the tool is unavailable
+— the real path is `caos-std/import-source`.
 
-- `read` / `ls` / `grep` — read the conversation tree.
-- `write` / `edit` — change a file. Every accepted change records a child
-  commit automatically; there is no staging step and nothing to commit by hand.
-- `copy` / `move` / `remove` — copy, move or delete a file or directory. A
-  source tree stays a source tree. `copy` and `move` create missing parent
-  directories and refuse an existing destination.
-- `import_source` — above.
-- `merge` — merge a commit into a source tree.
-- `publish_source` — push a source tree's commit to a branch on GitHub.
-- `log` / `show` / `diff` — a source tree's git history. There is no `git` in
-  the shell; these are how you see history and changes.
+`help()` with no path shows the session overview and the directories at the
+conversation root (`.caos` and `caos-std` in a fresh conversation).
+`help(path="caos-std/<name>")` prints a std tool's exact parameters — call it
+before the first use of any tool in a session, since the parameter name is
+not uniform (`caos-std/ls` takes `path`; `caos-std/read` instead takes
+`file-path`, and the tree to read it from is `in`, not `root`). `caos-std/`
+exists only in the evaluated tree, so plain paths cannot see it directly:
+`eval-path(path="caos-std")` returns a tree hash, and
+`run(path="caos-std/read", arguments={"in": <hash>, "file-path": "README.md"})`
+reads the index of every std tool. The std tools you will want most:
 
-**Std tools**, reached by path with `run_tool(path="caos-std/<name>",
-arguments={...})`. There is no `bash` tool by name; shell is one of these.
-`tool_help(path="caos-std/<name>")` prints a tool's parameters. `caos-std/`
-exists only in the evaluated tree, so `read` and `ls` cannot see it directly:
-`eval_path(path="caos-std")` returns a tree hash, and
-`read(root=<hash>, file-path="README.md")` is the index of every std tool. The
-ones you will want:
-
+- `caos-std/read` / `caos-std/ls` / `caos-std/grep` — read the conversation
+  tree.
+- `caos-std/write` / `caos-std/edit` — change a file. Every accepted change
+  records a child commit automatically; there is no staging step and nothing
+  to commit by hand. Give the full path from the conversation root (e.g.
+  `sources/<repo>/01-change/README.md`) rather than a bare filename plus an
+  `in` tree hash: passing `in` to `write`/`edit` has been observed to fail
+  with an unrelated-looking `.caos is protocol metadata` error instead of
+  writing the file. `in` is for the read-only tools (`read`/`ls`/`grep`).
+- `caos-std/copy` / `caos-std/move` / `caos-std/remove` — copy, move or delete
+  a file or directory. A source tree stays a source tree. `copy` and `move`
+  create missing parent directories and refuse an existing destination.
+- `caos-std/import-source` — above.
+- `caos-std/merge` — merge a commit into a source tree.
+- `caos-std/publish-source` — push a source tree's commit to a branch on
+  GitHub.
+- `caos-std/log` / `caos-std/show` / `caos-std/diff` — a source tree's git
+  history. There is no `git` in the shell; these are how you see history and
+  changes.
 - `caos-std/bash-tool` — `sh -c`, for computing something over content (count,
   sort, `diff -r`, run a script). It runs over a scratch copy of the
   conversation tree, which is **lazy**: list in `paths` every existing file or
@@ -141,7 +166,7 @@ Only things an error message does not teach:
   too-large tool result is saved to. Do that reading yourself.
 - **Edit and publish a source tree** (`sources/<repo>/...`), not
   the conversation root: an `edit` on a bare path succeeds but changes only
-  scratch files, and `publish_source` rejects `.`.
+  scratch files, and `publish-source` rejects `.`.
 
 ## What is configured here
 
