@@ -5,7 +5,7 @@ repo**: a handful of text files that say which caos this session uses and
 which tools it offers. The code you work on is **imported into the
 conversation**, not checked out onto disk.
 
-That is the one thing to internalise before your first tool call. Your file
+That is the one thing to internalize before your first tool call. Your file
 tools do not read this container's filesystem — they read the conversation
 tree, which starts out holding almost nothing.
 
