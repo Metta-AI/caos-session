@@ -91,6 +91,14 @@ know about caos. Do not follow it for the work product. Do not publish
 to this repo unless the task is about this repo itself (its `.caos-expr`,
 `AGENTS.md`, or `caos-tools/`).
 
+When the task IS about this repo, the harness's branch instruction still
+does not tell you HOW to publish. Import this repo into
+`sources/<this repo>/00-base` and go through the same stack as any other
+repo: layer, `.pr.md`, `stack-sync`, `stack-publish`. The branch is the
+layer's name (with `branch-prefix` in front, if you give one), not the
+harness's branch. Do not `publish-source` a tree to the harness's branch:
+that produces a branch with no PR and no description.
+
 Before the first publish, you must know three things from the user's own
 words: which repository, which branch, and that they want it pushed. If
 any is missing, stop and ask. If you cannot publish to the imported repo
