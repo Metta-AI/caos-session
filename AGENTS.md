@@ -32,28 +32,48 @@ container and nothing is uploaded from it, so a large repository costs about
 the same as a small one. Omit `revision` for the default branch. Public
 repositories need no credentials.
 
-Everything for one repo lives in a single directory, `sources/<repo>/`. Do not
-use a separate `imports/` directory. Copy the base to a scratch layer, edit
-that, and move it to a named layer when a chunk of work is finished, each
-step run through `run` as above:
+## Every change goes out as a stack, even a one-line fix
+
+Everything for one repo lives in a single directory, `sources/<repo>/`, and
+that directory is a stack. Do not use a separate `imports/` directory. There is
+one way to get a change out, and it is the same for a typo as for a feature:
+a one-word fix is a one-layer stack. Every step runs through `run` as above.
 
 ```
-run(path="caos-std/copy", arguments={"from": "sources/<repo>/00-base", "to": "sources/<repo>/99-dirty"})
-... edit sources/<repo>/99-dirty with caos-std/write or caos-std/edit ...
-run(path="caos-std/move", arguments={"from": "sources/<repo>/99-dirty", "to": "sources/<repo>/01-<name>"})
+1. run(path="caos-std/import-source", ...  into="sources/<repo>/00-base")      # above
+2. run(path="caos-std/copy", arguments={"from": "sources/<repo>/00-base", "to": "sources/<repo>/99-dirty"})
+3. ... edit sources/<repo>/99-dirty with caos-std/write or caos-std/edit ...
+4. run(path="caos-std/move", arguments={"from": "sources/<repo>/99-dirty", "to": "sources/<repo>/01-<name>"})
+5. run(path="caos-std/write", arguments={"file-path": "sources/<repo>/01-<name>.pr.md",
+                                        "content": "<PR title>\n\n<PR body>\n"})
+6. run(path="caos-std/stack-sync", arguments={"stack": "sources/<repo>"})
+7. run(path="caos-std/stack-publish", arguments={"stack": "sources/<repo>"})
 ```
+
+Step 7 pushes `01-<name>` to the branch `<name>` and opens its PR from the
+`.pr.md`. That PR is what you hand the user. Steps 4 to 7 are not optional
+wrap-up for big work. Without them there is no layer, no PR description and
+no PR, only a bare branch nobody asked for.
+
+Do not:
+
+- **publish `99-dirty`.** It has no `.pr.md`, so `stack-publish` skips it on
+  purpose. It is scratch.
+- **use `caos-std/publish-source` to get work out.** It pushes one commit to
+  one branch and opens no PR. `stack-publish` calls it for you. Reach for it
+  only where `GIT.md` says to.
+- **skip `GIT.md` because the change is small.** Read it before your first
+  edit, not when the work starts to look like a "stack": every change is one.
+  `eval-path(path="caos-std")` gives a tree hash, then
+  `run(path="caos-std/read", arguments={"in": <that hash>, "file-path": "GIT.md"})`.
+  It covers what this section leaves out: more layers, updating the base,
+  merging, PR comments, `stack-merge-to-master` and creating a new repo.
 
 Never edit `00-base`: it is the record of where you started, and any later
 diff, merge or publication is measured against it. Only `00-base` has a
 `.source.json` provenance file beside it; leave that alone too. (Replacing the
-base with a newer upstream tip is the one case that touches it; `GIT.md` shows
-how.)
-
-This is only the short version. For stacks of layers, updating the base,
-merging, squashing, publishing, PRs and creating a new repo, read
-`caos-std/GIT.md` first:
-`eval-path(path="caos-std")` to get a tree hash, then
-`run(path="caos-std/read", arguments={"in": <that hash>, "file-path": "GIT.md"})`.
+base with a newer upstream tip is the one case that touches it; `stack-sync`
+does that for you.)
 
 **If the user gives a bare name** rather than a URL, resolve it before
 importing rather than guessing: a wrong fork imports cleanly and wastes the
