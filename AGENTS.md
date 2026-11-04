@@ -192,6 +192,12 @@ The imported repo may define its own build and test tools under
 
 Only things an error message does not teach:
 
+- **Skipping the stack for a small change.** A session asked for a one-word
+  spelling fix imported, copied to `99-dirty`, edited, and then
+  `publish-source`d `99-dirty` straight to the harness's branch. Every tool
+  call succeeded, so nothing flagged it, but the result was a branch with no
+  layer, no `.pr.md` and no PR, and the work had to be redone. A small change
+  is still a layer plus `stack-publish`.
 - **Workers have the network.** A std tool, or a tool a repo defines under
   `caos-tools/`, runs in a container that reaches GitHub, package registries
   and the Anthropic API; nothing fences egress. Earlier sessions assumed the
