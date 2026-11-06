@@ -5,7 +5,7 @@ repo**: a handful of text files that say which caos this session uses and
 which tools it offers. The code you work on is **imported into the
 conversation**, not checked out onto disk.
 
-That is the one thing to internalise before your first tool call. Your file
+That is the one thing to internalize before your first tool call. Your file
 tools do not read this container's filesystem — they read the conversation
 tree, which starts out holding almost nothing.
 
@@ -32,28 +32,48 @@ container and nothing is uploaded from it, so a large repository costs about
 the same as a small one. Omit `revision` for the default branch. Public
 repositories need no credentials.
 
-Everything for one repo lives in a single directory, `sources/<repo>/`. Do not
-use a separate `imports/` directory. Copy the base to a scratch layer, edit
-that, and move it to a named layer when a chunk of work is finished, each
-step run through `run` as above:
+## Every change goes out as a stack, even a one-line fix
+
+Everything for one repo lives in a single directory, `sources/<repo>/`, and
+that directory is a stack. Do not use a separate `imports/` directory. There is
+one way to get a change out, and it is the same for a typo as for a feature:
+a one-word fix is a one-layer stack. Every step runs through `run` as above.
 
 ```
-run(path="caos-std/copy", arguments={"from": "sources/<repo>/00-base", "to": "sources/<repo>/99-dirty"})
-... edit sources/<repo>/99-dirty with caos-std/write or caos-std/edit ...
-run(path="caos-std/move", arguments={"from": "sources/<repo>/99-dirty", "to": "sources/<repo>/01-<name>"})
+1. run(path="caos-std/import-source", ...  into="sources/<repo>/00-base")      # above
+2. run(path="caos-std/copy", arguments={"from": "sources/<repo>/00-base", "to": "sources/<repo>/99-dirty"})
+3. ... edit sources/<repo>/99-dirty with caos-std/write or caos-std/edit ...
+4. run(path="caos-std/move", arguments={"from": "sources/<repo>/99-dirty", "to": "sources/<repo>/01-<name>"})
+5. run(path="caos-std/write", arguments={"file-path": "sources/<repo>/01-<name>.pr.md",
+                                        "content": "<PR title>\n\n<PR body>\n"})
+6. run(path="caos-std/stack-sync", arguments={"stack": "sources/<repo>"})
+7. run(path="caos-std/stack-publish", arguments={"stack": "sources/<repo>"})
 ```
+
+Step 7 pushes `01-<name>` to the branch `<name>` and opens its PR from the
+`.pr.md`. That PR is what you hand the user. Steps 4 to 7 are not optional
+wrap-up for big work. Without them there is no layer, no PR description and
+no PR, only a bare branch nobody asked for.
+
+Do not:
+
+- **publish `99-dirty`.** It has no `.pr.md`, so `stack-publish` skips it on
+  purpose. It is scratch.
+- **use `caos-std/publish-source` to get work out.** It pushes one commit to
+  one branch and opens no PR. `stack-publish` calls it for you. Reach for it
+  only where `GIT.md` says to.
+- **skip `GIT.md` because the change is small.** Read it before your first
+  edit, not when the work starts to look like a "stack": every change is one.
+  `eval-path(path="caos-std")` gives a tree hash, then
+  `run(path="caos-std/read", arguments={"in": <that hash>, "file-path": "GIT.md"})`.
+  It covers what this section leaves out: more layers, updating the base,
+  merging, PR comments, `stack-merge-to-master` and creating a new repo.
 
 Never edit `00-base`: it is the record of where you started, and any later
 diff, merge or publication is measured against it. Only `00-base` has a
 `.source.json` provenance file beside it; leave that alone too. (Replacing the
-base with a newer upstream tip is the one case that touches it; `GIT.md` shows
-how.)
-
-This is only the short version. For stacks of layers, updating the base,
-merging, squashing, publishing, PRs and creating a new repo, read
-`caos-std/GIT.md` first:
-`eval-path(path="caos-std")` to get a tree hash, then
-`run(path="caos-std/read", arguments={"in": <that hash>, "file-path": "GIT.md"})`.
+base with a newer upstream tip is the one case that touches it; `stack-sync`
+does that for you.)
 
 **If the user gives a bare name** rather than a URL, resolve it before
 importing rather than guessing: a wrong fork imports cleanly and wastes the
@@ -70,6 +90,14 @@ to push there. That instruction is generic harness plumbing and does not
 know about caos. Do not follow it for the work product. Do not publish
 to this repo unless the task is about this repo itself (its `.caos-expr`,
 `AGENTS.md`, or `caos-tools/`).
+
+When the task IS about this repo, the harness's branch instruction still
+does not tell you HOW to publish. Import this repo into
+`sources/<this repo>/00-base` and go through the same stack as any other
+repo: layer, `.pr.md`, `stack-sync`, `stack-publish`. The branch is the
+layer's name (with `branch-prefix` in front, if you give one), not the
+harness's branch. Do not `publish-source` a tree to the harness's branch:
+that produces a branch with no PR and no description.
 
 Before the first publish, you must know three things from the user's own
 words: which repository, which branch, and that they want it pushed. If
@@ -128,8 +156,16 @@ reads the index of every std tool. The std tools you will want most:
   create missing parent directories and refuse an existing destination.
 - `caos-std/import-source` — above.
 - `caos-std/merge` — merge a commit into a source tree.
-- `caos-std/publish-source` — push a source tree's commit to a branch on
-  GitHub.
+- `caos-std/stack-sync` — bring `sources/<repo>/` up to date with the remote
+  before publishing: new trunk tip into `00-base`, each layer restacked.
+- `caos-std/stack-publish` — **how work leaves the session**: push every
+  layer that has a `.pr.md` to its branch and open or update its PR (see
+  "Every change goes out as a stack").
+- `caos-std/stack-merge-to-master` — merge a reviewed stack's PRs, bottom
+  to top, when the user asks you to merge.
+- `caos-std/ci-status` — what CI says about a branch or a layer.
+- `caos-std/publish-source` — low level: push one commit to one branch, with
+  no PR. `stack-publish` uses it for you. It is not how you publish a change.
 - `caos-std/log` / `caos-std/show` / `caos-std/diff` — a source tree's git
   history. There is no `git` in the shell; these are how you see history and
   changes.
@@ -156,6 +192,12 @@ The imported repo may define its own build and test tools under
 
 Only things an error message does not teach:
 
+- **Skipping the stack for a small change.** A session asked for a one-word
+  spelling fix imported, copied to `99-dirty`, edited, and then
+  `publish-source`d `99-dirty` straight to the harness's branch. Every tool
+  call succeeded, so nothing flagged it, but the result was a branch with no
+  layer, no `.pr.md` and no PR, and the work had to be redone. A small change
+  is still a layer plus `stack-publish`.
 - **Workers have the network.** A std tool, or a tool a repo defines under
   `caos-tools/`, runs in a container that reaches GitHub, package registries
   and the Anthropic API; nothing fences egress. Earlier sessions assumed the
